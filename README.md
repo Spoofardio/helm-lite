@@ -15,7 +15,7 @@ Build a version (folder name) using values from (env target).conf
 
 In this case we will build the dev version of v0.1 (fills in all templates with the values from dev.conf)
 ```
-hl gen v0.1 dev
+./hl gen v0.1 dev
 ```
 
 The generated files go under target/dev/v0.1/
@@ -26,7 +26,7 @@ Makes an exact copy of an old version and uses that to create a new version. Thi
 
 In this case it copies the version v0.1 to make the new version v0.2
 ```
-hl new v0.1 v0.2
+./hl new v0.1 v0.2
 ```
 
 ## Authors
