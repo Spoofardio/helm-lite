@@ -40,21 +40,42 @@ func createNewVersion() {
 // Generates a release
 func generateRelease() {
 	release := os.Args[2]
-	configFile := release + "/" + os.Args[3] + ".conf"
-	config := getFileContents(configFile)
-	outputPath := "target/" + os.Args[3] + "/" + release + "/"
+	env := os.Args[3]
+	configPath := fmt.Sprintf("./%s/%s.conf", release, env)
+	config := getFileContents(configPath)
+
+	inputPath := fmt.Sprintf("./%s/", release)
+	outputPath := fmt.Sprintf("target/%s/%s/", env, release)
+	buildDirectoryTemplates(inputPath, outputPath, config)
+}
+
+func buildDirectoryTemplates(inputPath string, outputPath string, config string) {
 	buildOutputFolder(outputPath)
-	files, err := ioutil.ReadDir("./" + release + "/")
+	files, err := ioutil.ReadDir(inputPath)
+
+	//defer files.Close() //?
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	for _, f := range files {
-		if !strings.Contains(f.Name(), ".conf") {
-			fmt.Println(f.Name())
-			output := buildTemplateWithConfig(config, getFileContents(release+"/"+f.Name()))
-			createOutputFile(outputPath+f.Name(), output)
+		fi, err := os.Stat(inputPath + f.Name())
+		if err != nil {
+			log.Fatal(err)
+		}
+		if fi.Mode().IsDir() { // if a directory
+			newInputPath := fmt.Sprintf("%s/%s/", inputPath, f.Name())
+			newOutputPath := fmt.Sprintf("%s/%s/", outputPath, f.Name())
+			buildDirectoryTemplates(newInputPath, newOutputPath, config)
+		} else { //if a file
+			if !strings.Contains(f.Name(), ".conf") { // if a template file (aka not config)
+				fmt.Println(f.Name())
+				templateFilePath := fmt.Sprintf("%s%s", inputPath, f.Name())
+				output := buildTemplateWithConfig(config, getFileContents(templateFilePath))
+				filePath := fmt.Sprintf("%s%s", outputPath, f.Name())
+				createOutputFile(filePath, output)
+			}
 		}
 	}
 }
