@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{NAME}}
+  name: {{name}}
   namespace: default
   labels:
-    app: {{NAME}}
+    app: {{name}}
 spec:
   type: NodePort
   ports:
-  - port: {{PORT}}
+  - port: {{port}}
     name: amqp
   selector:
-    app: {{NAME}}
+    app: {{name}}
