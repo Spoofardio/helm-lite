@@ -11,7 +11,7 @@ go build tuner-release-tool/main.go && mv main hl
 
 ### Generate a release for a given environment
 
-Build a version (folder name) using values from (env target).conf
+Build a version (folder name) using values from `(env target).conf` This config file can either be in the root of the version directory or in the `config/` folder which is a subdirectory of the version directory. 
 
 In this case we will build the dev version of v0.1 (fills in all templates with the values from dev.conf)
 ```

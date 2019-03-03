@@ -13,27 +13,8 @@ import (
 func main() {
 	if os.Args[1] == "gen" {
 		generateRelease()
-	} else if os.Args[1] == "new" {
-		createNewVersion()
 	} else {
 		fmt.Println("Invalid Command")
-	}
-}
-
-// Creates a new version
-func createNewVersion() {
-	oldRelease := os.Args[2]
-	newRelease := os.Args[3]
-	buildOutputFolder(newRelease + "/")
-	files, err := ioutil.ReadDir("./" + oldRelease + "/")
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	for _, f := range files {
-		fileContents := getFileContents(oldRelease + "/" + f.Name())
-		createOutputFile(newRelease+"/"+f.Name(), fileContents)
 	}
 }
 
@@ -42,6 +23,9 @@ func generateRelease() {
 	release := os.Args[2]
 	env := os.Args[3]
 	configPath := fmt.Sprintf("./%s/%s.conf", release, env)
+	if _, err := os.Stat(configPath); os.IsNotExist(err) { // if file not in root dir
+		configPath = fmt.Sprintf("./%s/config/%s.conf", release, env) // then it is in config dir
+	}
 	config := getFileContents(configPath)
 
 	inputPath := fmt.Sprintf("./%s/", release)
@@ -52,8 +36,6 @@ func generateRelease() {
 func buildDirectoryTemplates(inputPath string, outputPath string, config string) {
 	buildOutputFolder(outputPath)
 	files, err := ioutil.ReadDir(inputPath)
-
-	//defer files.Close() //?
 
 	if err != nil {
 		log.Fatal(err)
