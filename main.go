@@ -74,7 +74,7 @@ func buildTemplateWithConfig(config string, template string) string {
 		if line[0] != '#' {
 			i := strings.Index(line, "=")
 			key := fmt.Sprintf("{{%s}}", line[:i])
-			value := line[i+1:]
+			value := strings.TrimSpace(line[i+1:])
 			output = strings.Replace(output, key, value, -1)
 		}
 	}
